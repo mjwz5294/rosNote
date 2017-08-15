@@ -1,0 +1,71 @@
+一、安装：http://wiki.ros.org/kinetic/Installation/Ubuntu
+1、选择kinetic版本的ros；
+2、配置软件库（Ubuntu Repositories）：http://blog.sina.com.cn/s/blog_602f87700102vyto.html，不过系统似乎默认已经允许四种软件库了，无需配置；
+3、设置允许电脑从packages.ros.org下载软件：sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+4、设置秘钥：sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116（这里没看明白，要这个key有什么用，毕竟大家都用同一个）
+5、安装：
+（1）sudo apt-get update：保证是最新版本
+（2）有四种安装配置，我选择最全的（这也是别人官方推荐的），免得后面又来装：
+	sudo apt-get install ros-kinetic-desktop-full
+执行的过程中出了问题，需要回到（1）重走一遍流程。
+
+问题描述如下：
+E: 下载 http://cn.archive.ubuntu.com/ubuntu/pool/universe/b/boost-defaults/libboost-test-dev_1.58.0.1ubuntu1_amd64.deb  Hash 校验和不符 失败
+
+E: 下载 http://101.110.118.75/packages.ros.org/ros/ubuntu/pool/main/r/ros-kinetic-geometry-msgs/ros-kinetic-geometry-msgs_1.12.5-0xenial-20170613-161430-0800_amd64.deb  403  Forbidden 失败
+
+E: 下载 http://101.110.118.72/packages.ros.org/ros/ubuntu/pool/main/r/ros-kinetic-sensor-msgs/ros-kinetic-sensor-msgs_1.12.5-0xenial-20170613-162039-0800_amd64.deb  403  Forbidden 失败
+
+E: 有几个软件包无法下载，要不运行 apt-get update 或者加上 --fix-missing 的选项再试试？
+
+执行sudo apt-get install ros-kinetic-desktop-full --fix-missing后，又出现了新问题：
+无法修复缺失的软件包。
+E: 下载 http://101.110.118.75/packages.ros.org/ros/ubuntu/pool/main/r/ros-kinetic-geometry-msgs/ros-kinetic-geometry-msgs_1.12.5-0xenial-20170613-161430-0800_amd64.deb  403  Forbidden 失败
+
+执行sudo apt-get update后，又执行sudo apt-get install ros-kinetic-desktop-full，不再提示错误
+
+
+二、配置：
+1、安装rosdep：rosdep方便我们安装一些ros依赖项
+（1）sudo rosdep init
+（2）rosdep update
+2、环境配置：
+（1）echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+（2）source ~/.bashrc
+3、安装一些额外工具：
+sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential
+
+
+
+三、创建ros工作空间：（创建好之后的目录结构：http://wiki.ros.org/catkin/workspaces）
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws
+catkin_make
+
+打印我们的ros包目录（echo $ROS_PACKAGE_PATH），得到结果
+/home/longgege/catkin_ws/src:/opt/ros/kinetic/share
+将来我们查找包、执行文件等目录时，基本都在/opt/ros/kinetic/share里面
+
+
+四、基本命令：
+1、首先需要安装ros-tutorials程序包，用于实例讲解：sudo apt-get install ros-kinetic-ros-tutorials
+2、rospack：查看包信息
+3、roscd：进入包
+4、rosls：查看包目录
+
+
+Ubuntu常用命令：
+1、cat查看文档内容
+2、pwd查看当前所在目录
+
+
+
+
+
+
+
+
+
+
+
+

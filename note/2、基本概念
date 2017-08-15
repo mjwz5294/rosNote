@@ -1,0 +1,74 @@
+一、
+1、先装上试验包
+sudo apt-get install ros-kinetic-ros-tutorials
+2、运行roscore
+3、新开一个终端，执行rosnode list查看正在运行的ros节点，发现/rosout在活跃
+4、rosinfo /rosout，查看详细信息
+5、rosrun [package_name] [node_name]，运行可执行文件（运行成功就会产生节点）
+rosrun turtlesim turtlesim_node
+默认节点名与文件名相同，我们可以定义节点名，这样就可以一个文件生成多个节点：
+rosrun turtlesim turtlesim_node __name:=my_turtle
+
+
+二、话题和消息
+1、用键盘控制海龟
+终端一：roscore
+终端二：rosrun turtlesim turtlesim_node
+终端三：rosrun turtlesim turtle_teleop_key
+2、原理：键盘向/turtle1/cmd_vel话题发出了
+3、使用rqt_graph查看系统运行情况的动态图形
+（1）首先保证安装了rqt_graph
+sudo apt-get install ros-kinetic-rqt
+sudo apt-get install ros-kinetic-rqt-common-plugins
+（2）运行rqt_graph：rosrun rqt_graph rqt_graph
+4、使用rostopic查看话题相关信息
+（1）如执行rostopic echo /turtle1/cmd_vel时，若有消息发给/turtle1/cmd_vel话题，就会打印到终端
+（2）rostopic type /turtle1/cmd_vel：查看话题的消息类型，应该会得到geometry_msgs/Twist
+5、rosmsg查看消息相关信息
+rosmsg show geometry_msgs/Twist：会得到消息的结构。
+6、使用rostopic pub在终端发消息
+先看一条命令：
+rostopic pub -1 /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
+（1）添加了-1（数字1，不是字母l），发送消息后会退出，否则不会退出
+（2）/turtle1/cmd_vel geometry_msgs/Twist是话题和消息类型，不解释
+（3）--表示后面跟的都是参数，而不再是命令选项
+再看一条命令
+rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
+（1）没加-1，执行后不会退出
+（2）-r 1 两个选项：-r发布一个稳定的命令流，1表示频率为1Hz
+7、查看数据发布频率：rostopic hz /turtle1/pose
+8、使用rqt_plot
+rosrun rqt_plot rqt_plot
+需要输入话题
+
+
+
+三、服务和参数
+1、服务（services）是节点之间通讯的另一种方式。服务允许节点发送请求（request） 并获得一个响应（response）
+2、rosservice查看服务相关信息
+（1）rosservice call clear：清除了turtlesim_node的背景上的轨迹
+（2）rosservice list：查看有哪些可用服务
+（3）常用命令：
+rosservice list         输出可用服务的信息
+rosservice call         调用带参数的服务
+rosservice type         输出服务类型
+rosservice find         依据类型寻找服务find services by service type
+rosservice uri          输出服务的ROSRPC uri
+3、rosparam使得我们能够存储并操作ROS 参数服务器（Parameter Server）上的数据。
+rosparam set            设置参数
+rosparam get            获取参数
+rosparam load           从文件读取参数
+rosparam dump           向文件中写入参数
+rosparam delete         删除参数
+rosparam list           列出参数名
+比较常用的场景就是，读取数据并存储在params.yaml中，以后还可以重新读取
+
+
+
+
+
+
+
+
+
+

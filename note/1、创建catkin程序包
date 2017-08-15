@@ -1,0 +1,17 @@
+1、使用catkin_create_pkg命令来创建一个名为'beginner_tutorials'的新程序包，这个程序包依赖于std_msgs、roscpp和rospy：
+catkin_create_pkg beginner_tutorials std_msgs rospy roscpp
+2、查看一级依赖：
+rospack depends1 beginner_tutorials
+得到结果为std_msgs rospy roscpp
+3、查看间接依赖，所有依赖都会出现在结果中
+rospack depends beginner_tutorials
+4、自定义程序包：
+beginner_tutorials目录中会有一个自动生成的package.xml文件，重点注意里面的5项内容：
+（1）描述标签：其实也没多大关系
+（2）维护者标签：不重要
+（3）许可标签：由多种许可协议，因为ROS核心组件的剩余部分已经使用了BSD协议，所有都用BSD协议
+（4）依赖项标签：比较重要，它描述程序包的各种依赖项，这些依赖项分为build_depend、buildtool_depend、run_depend、test_depend。文件默认提供了build_depend和run_depend
+（5）去掉那些注释，让文档简洁清晰
+5、编译程序包
+cd ~/catkin_ws/
+catkin_make
