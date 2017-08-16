@@ -1,0 +1,35 @@
+一、手动创建ros包
+1、mkdir -p src/foobar
+2、cd src/foobar/
+3、gedit package.xml创建package.xml，填入内容（见源文件）。编辑完成后，执行rospack find foobar，将能够找到包的位置：/home/longgege/catkin_ws/src/foobar。注意这里只有package.xml文件，其它什么都没有
+4、gedit CMakeLists.txt创建CMakeLists.txt文件，填入内容（见源文件）。
+5、通过这个过程，就建成了一个可以在ros下用catkin编译的包了。
+6、问题：如何编辑package.xml和CMakeLists.txt
+
+
+
+
+二、管理系统依赖性
+rosdep 是一个能够下载并安装ROS packages所需要的系统依赖项的小工具 使用方法:rosdep install [package]
+
+
+
+
+三、Roslaunch在大型项目中的使用技巧：暂时还看不懂，也无法实践
+
+
+
+
+四、ROS在多机器人上的使用：暂时还看不懂，也无法实践
+
+
+
+
+五、python中使用C++类：比较麻烦，暂时放着
+
+
+
+
+
+
+
