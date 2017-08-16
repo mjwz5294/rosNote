@@ -1,0 +1,144 @@
+一、rqt_console
+1、安装需要的包：
+sudo apt-get install ros-kinetic-rqt ros-kinetic-rqt-common-plugins ros-kinetic-turtlesim
+（1）rqt_console属于ROS日志框架(logging framework)的一部分，用来显示节点的输出信息
+（2）rqt_logger_level允许我们修改节点运行时输出信息的日志等级（logger levels）（包括 DEBUG、WARN、INFO和ERROR）
+2、日志等级的优先顺序：Fatal、Error、Warn、Info、Debug
+通过设置日志等级你可以获取该等级及其以上优先等级的所有日志消息。比如，将日志等级设为Warn时，你会得到Warn、Error和Fatal这三个等级的所有日志消息。
+
+
+二、roslaunch
+1、进入我自己创建的包：
+（1）source ~/catkin_ws/devel/setup.bash
+（2）roscd beginner_tutorials/
+2、创建launch文件
+（1）mkdir launch
+（2）cd launch
+（3）gedit turtlemimic.launch
+3、编辑turtlemimic.launch，代码见源文件，这里解释关键代码
+（1）两个group接点分组，用ns（namespace）标签来区分，分别为turtulesim1，turtulesim2，分组内都用turtulesim节点并命名为sim。通过这样的配置，我们可以同事启动两个turtulesim模拟器而不会产生命名冲突。
+（2）node部分：将所有话题的输入和输出分别重命名为turtulesim1和turtulesim2，这样就会使得turtulesim2去模仿turtulesim1
+4、通过roslaunch命令来启动launch文件
+（1）roslaunch beginner_tutorials turtlemimic.launch
+（2）执行rostopic pub /turtlesim1/turtle1/cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, -1.8]'，向turtlesim1发消息，让他转圈，结果turtlesim2也跟着转
+（3）最后执行rqt_graph，查看这个过程中到底发生了什么。
+5、显然这个turtlemimic.launch文件理解的并不透彻，还需要继续学习，这里就跑个例子感受感受就是。
+（1）话题的监听：remap部分到底干了什么
+（2）节点、话题的名称乱七八糟，需要整理
+
+
+
+
+三、消息的创建和使用
+1、概念
+（1）msg文件就是一个描述ROS中所使用消息类型的简单文本。它们会被用来生成不同语言的源代码。
+（2）一个srv文件描述一项服务。它包含两个部分：请求和响应。
+（3）msg文件存放在package的msg目录下，srv文件则存放在srv目录下。
+（4）msg文件样例：它使用了Header，string，和其他另外两个消息类型。
+  Header header
+  string child_frame_id
+  geometry_msgs/PoseWithCovariance pose
+  geometry_msgs/TwistWithCovariance twist
+（5）srv样例：分为请求和响应两部分，由'---'分隔。其中A 和 B 是请求, 而Sum 是响应。
+  int64 A
+  int64 B
+  ---
+  int64 Sum
+2、创建msg
+（1）创建文件：
+cd ~/catkin_ws/src/beginner_tutorials
+mkdir msg
+echo "int64 num" > msg/Num.msg
+此时.msg文件中只有一段代码：int64 num
+（2）修改package.xml，确保msg文件被转换成为C++，Python或其他语言的源代码。确保包含以下代码：
+<build_depend>message_generation</build_depend>
+<run_depend>message_runtime</run_depend>
+这段代码的作用就是保证.msg能被正确转换，但创建的时候，一般默认不会有。
+注意，在构建的时候，我们只需要"message_generation"。然而，在运行的时候，我们只需要"message_runtime"。
+（3）编辑CMakeLists.txt，在find_packag函数中添加对message_generation的依赖，这样就可以生成消息了
+（4）编辑CMakeLists.txt，在add_message_files部分，添加我们新添加的消息，比如刚刚添加的Num.msg。
+add_message_files(
+  FILES
+  Num.msg
+)
+（5）编辑CMakeLists.txt，要确保CMake知道在什么时候重新配置我们的project，需要添加代码generate_messages()
+3、使用rosmsg
+通过前面的编辑保存之后，不需要再作其它什么操作，回到~/catkin_ws，就可以通过rosmsg show查看到新添加的消息了
+rosmsg show beginner_tutorials/Num
+忘记包名的话，也可以：rosmsg show Num，得到的结果中就会有包名
+
+
+
+四、srv的创建和使用
+1、创建：
+（1）roscd beginner_tutorials
+（2）mkdir srv
+（3）复制一个服务文件（也可以自己写）：roscp rospy_tutorials AddTwoInts.srv srv/AddTwoInts.srv
+2、配置
+（1）在CMakeLists.txt文件中增加了对message_generation的依赖。即：在find_package函数中添加message_generation（它对msg和srv都起作用）
+（2）package.xml文件中,：
+add_service_files(
+  FILES
+  AddTwoInts.srv
+)
+3、使用
+（1）查看：rossrv show beginner_tutorials/AddTwoInts
+（2）也可以不指定包名：rossrv show AddTwoInts，这时会查找到两个包里面的AddTwoInts.srv文件
+4、与msg相同的步骤：
+（1）CMakeLists.txt中的generate_messages函数
+（2）CMakeLists.txt中的find_packag
+（3）package.xml中的add_service_files和add_message_files函数
+5、增加了新的消息和服务，需要重新编译包：在~/catkin_ws中执行catkin_make命令。编译后，生成的python、C++代码会放在devel文件夹中。
+
+
+
+
+五、编辑python版本的消息发布器
+1、创建文件夹
+roscd beginner_tutorials
+mkdir scripts
+cd scripts
+2、下载一个现成的发布器文件：
+（1）wget https://raw.github.com/ros/ros_tutorials/kinetic-devel/rospy_tutorials/001_talker_listener/talker.py
+（2）设置执行权限：chmod +x talker.py
+（3）关于代码的解释，去看源码中的注释
+
+
+
+
+六、编辑python版本的订阅器
+1、进入目录，下载源码：
+（1）roscd beginner_tutorials/scripts/
+（2）wget https://raw.github.com/ros/ros_tutorials/kinetic-devel/rospy_tutorials/001_talker_listener/listener.py
+（3）chmod +x listener.py ，设置运行权限
+（4）代码很好懂，看注释
+
+
+
+
+
+七、测试消息发布器和订阅器
+1、rosrun beginner_tutorials talker.py
+2、rosrun beginner_tutorials listener.py
+3、问题：
+from: can't read /var/mail/std_msgs.msg
+/home/longgege/catkin_ws/src/beginner_tutorials/scripts/talker.py: 行 7: 未预期的符号 `(' 附近有语法错误
+/home/longgege/catkin_ws/src/beginner_tutorials/scripts/talker.py: 行 7: `def talker():'
+一开始没找到答案，最后在这里找到了答案
+https://answers.ros.org/question/164091/rosrun-of-a-working-python-script-fails/
+翻译：用shell而非python来执行py代码，代码的第一行必须是shebang 行，这里是#!/usr/bin/env python
+同时，需要识别中文注释，第二行加上# -*- coding: utf-8 -*-
+
+
+
+
+
+
+
+
+
+
+
+
+
+

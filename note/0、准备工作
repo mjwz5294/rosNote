@@ -52,15 +52,22 @@ catkin_make
 2、rospack：查看包信息
 3、roscd：进入包
 4、rosls：查看包目录
+5、运行自己创建的包之前，执行source ~/catkin_ws/devel/setup.bash，才能识别ros命令，为了方便，我在.bashrc文件中添加了sourceros快捷命令
 
 
 Ubuntu常用命令：
 1、cat查看文档内容
 2、pwd查看当前所在目录
+3、echo "int64 num" > msg/Num.msg：如果不存在Num.msg，则会创建该文件，并写入int64 num
 
 
 
 
+
+
+问题：
+1、CMakeLists.txt、package.xml、launch文件的编辑
+2、消息、主题的格式，以及监听主题，接受消息等流程的代码
 
 
 

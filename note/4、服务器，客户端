@@ -1,0 +1,17 @@
+一、服务器
+1、roscd beginner_tutorials/scripts
+2、创建文件：gedit add_two_ints_server.py
+3、代码及注释见源码
+4、chmod +x add_two_ints_server.py
+
+二、客户端
+1、roscd beginner_tutorials/scripts
+2、创建文件：gedit add_two_ints_client.py
+3、代码及注释见源码
+4、chmod +x add_two_ints_client.py
+
+
+三、运行
+1、rosrun beginner_tutorials add_two_ints_server.py
+2、rosrun beginner_tutorials add_two_ints_client.py 4 5
+3、得到结果9，试验成功
