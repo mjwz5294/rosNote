@@ -13,10 +13,10 @@ rosdep update
 执行成功后得到关键信息：updated cache in /home/longgege/.ros/rosdep/sources.cache
 
 四、根据作者的建议，学习本教程之前，先去wiki学完以下教程：
-1、初学者教程
-2、tf教程
-3、actionlib教程
-4、Rivz
+1、初学者教程:		http://wiki.ros.org/cn/ROS/Tutorials
+2、tf教程:		http://wiki.ros.org/tf/Tutorials
+3、actionlib教程:	http://wiki.ros.org/actionlib/Tutorials
+4、Rivz:			http://wiki.ros.org/rviz/Tutorials
 
 五、本书提及的重点细节
 1、如何使用ROS参数，一定要理顺

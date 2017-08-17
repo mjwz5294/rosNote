@@ -1,0 +1,85 @@
+一、安装教程源码：https://github.com/pirobot/rbx1
+这段代码虽然编译通过了，但很有可能后面运用会出错。没关系，第一步先读懂这份代码，将来我可以自己写代码控制机器人的时候，也就不用依赖它了。
+
+二、安装必备组件（参考教程：http://www.cnblogs.com/gary-guo/p/6638134.html）
+sudo apt install ros-kinetic-turtlebot-* ros-kinetic-openni-* \
+ ros-kinetic-openni2-* ros-kinetic-freenect-* ros-kinetic-usb-cam \
+ ros-kinetic-laser-* ros-kinetic-hokuyo-node \
+ ros-kinetic-audio-common gstreamer0.10-pocketsphinx \
+ ros-kinetic-pocketsphinx ros-kinetic-slam-gmapping \
+ ros-kinetic-joystick-drivers python-rosinstall \
+ ros-kinetic-orocos-kdl ros-kinetic-python-orocos-kdl \
+ python-setuptools ros-kinetic-dynamixel-motor-* \
+ libopencv-dev python-opencv ros-kinetic-vision-opencv ros-kinetic-opencv2 \
+ ros-kinetic-depthimage-to-laserscan ros-kinetic-arbotix-* \
+ ros-kinetic-turtlebot-teleop ros-kinetic-move-base \
+ ros-kinetic-map-server ros-kinetic-fake-localization \
+ ros-kinetic-amcl git subversion mercurial
+执行以上命令后，发生错误：
+E: 无法定位软件包 ros-kinetic-hokuyo-node
+E: 无法定位软件包 gstreamer0.10-pocketsphinx
+E: 无法按照 glob ‘gstreamer0.10-pocketsphinx’ 找到任何软件包
+E: 无法按照正则表达式 gstreamer0.10-pocketsphinx 找到任何软件包
+E: 无法定位软件包 ros-kinetic-pocketsphinx
+E: 无法定位软件包 ros-kinetic-opencv2
+E: 无法定位软件包 ros-kinetic-arbotix-*
+E: 无法按照 glob ‘ros-kinetic-arbotix-*’ 找到任何软件包
+E: 无法按照正则表达式 ros-kinetic-arbotix-* 找到任何软件包
+就是说，无法安装这几个：ros-kinetic-arbotix-*，ros-kinetic-opencv2，ros-kinetic-pocketsphinx，gstreamer0.10-pocketsphinx，ros-kinetic-hokuyo-node
+于是更改命令：
+sudo apt install ros-kinetic-turtlebot-* ros-kinetic-openni-* \
+ ros-kinetic-openni2-* ros-kinetic-freenect-* ros-kinetic-usb-cam \
+ ros-kinetic-laser-* \
+ ros-kinetic-audio-common \
+ ros-kinetic-slam-gmapping \
+ ros-kinetic-joystick-drivers python-rosinstall \
+ ros-kinetic-orocos-kdl ros-kinetic-python-orocos-kdl \
+ python-setuptools ros-kinetic-dynamixel-motor-* \
+ libopencv-dev python-opencv ros-kinetic-vision-opencv \
+ ros-kinetic-depthimage-to-laserscan \
+ ros-kinetic-turtlebot-teleop ros-kinetic-move-base \
+ ros-kinetic-map-server ros-kinetic-fake-localization \
+ ros-kinetic-amcl git subversion mercurial
+执行命令后，终端提示建议安装一下包：
+pidgin-festival festival-freebsoft-utils libasound2-doc libcppunit-doc gsl-ref-html openni2-doc
+
+三、接下来重点研究几个装不上的组件：
+1、pocketsphinx语音识别组件：http://blog.csdn.net/x_r_su/article/details/53022746?locationNum=1&fps=1。
+（1）没安装pygst：http://www.techinfected.net/2017/01/how-to-install-python-gst-in-ubuntu.html
+（2）由于ROS kinetic不支持pocketsphinx直接安装，这里安装了大量依赖包，不过总算成功了。
+（3）执行roslaunch pocketsphinx robocup.launch后，启动了一个语音识别服务，识别率真是让人无语
+（4）这第一步就把ros-kinetic-pocketsphinx，gstreamer0.10-pocketsphinx解决了
+2、ros-kinetic自带opencv3.2，这里就不装ros-kinetic-opencv2了，将来可能需要把ros开发环境合并到opencv环境中去，想想还是有点坑啊。
+3、ros-kinetic-arbotix机器人模拟器，最终选择了源码安装
+4、ros-kinetic-hokuyo-node关于激光机器人：https://answers.ros.org/question/243232/how-to-install-hokuyo_nodeurg_node-on-kinetic/
+5、小结：经历这些事情，得到些教训：
+（1）kinetic还是太新了，很多包不能直接安装，比较麻烦。不知道后面会不会被迫退回老版本
+（2）以后还是直接去python的虚拟环境工作吧，这次安装的ros的相关东西，可能都需要去opencv环境重复一次
+
+
+四、rbx1机器人代码
+1、安装
+官网（https://groups.google.com/forum/#!topic/ros-by-example/D6Oi7hxTtMc）有封信推荐使用Indigo，因为rbx1也不支持kinetic，不过我采用源码安装后，还是能够编译过去。
+git clone https://github.com/pirobot/rbx1.git
+2、运行
+（1）首先，要运行自己编译的包，必须sourceros后，才能运行
+（2）roslaunch rbx1_bringup fake_turtlebot.launch，运行机器人模型
+（3）rosrun rviz rviz -d `rospack find rbx1_nav`/sim.izi，运行rviz可视化工具
+（4）rostopic pub /cmd_vel geometry_msgs/Twist -r 10 '{linear: {x:  0.2, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.5}}'，发一条移动消息，可以在rivz中看到机器人转圈
+（5）rostopic pub -1 /cmd_vel geometry_msgs/Twist '{}'，停止转动
+
+
+
+
+五、至此，环境搞得差不多了。
+
+
+
+
+
+
+
+
+
+
+
