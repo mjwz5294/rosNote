@@ -1,0 +1,14 @@
+一、情景：
+1、之前想建立一个仓库，存储ros日志和代码，已经在github上建好了仓库，提交了一些日志
+2、学习新手教程的过程中，发现代码只能放在rosspace中，而没办法放到这个目录里
+3、之前想过直接把代码拷贝到这边来，但每次改动都要拷贝，我肯定接受不了，于是问题就来了
+4、目标：把之前的日志拷贝到rosspace的src目录下，与我自定义的ros包同级，然后将该目录设为github的本地仓库。
+
+二、操作：
+1、先把日志拷贝过来；
+2、git init,git add .等操作，将代码提交到本地仓库
+3、git remote add origin https://github.com/mjwz5294/rosNote.git
+4、git pull --rebase origin master
+5、git push --set-upstream origin master（这段命令还是终端提示的，之前尝试了很多网上的方案，失败了。用这个一试就成功了）
+
+三、成功了
