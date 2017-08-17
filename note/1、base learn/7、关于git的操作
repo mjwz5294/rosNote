@@ -12,3 +12,31 @@
 5、git push --set-upstream origin master（这段命令还是终端提示的，之前尝试了很多网上的方案，失败了。用这个一试就成功了）
 
 三、成功了
+
+
+
+
+
+
+
+
+新问题：每次git提交都要输密码
+1、进入~/
+2、gedit .git-credentials,输入内容： https://{username}:{password}@github.com
+3、执行 git config --global credential.helper store，执行完之后查看.gitconfig,发现会新增一项helper = store。这时候再去执行push就不会要求密码了。
+
+
+
+新问题：远程仓库回退，先本地回退，然后强制push
+1、git reset --hard commitId
+2、git push -f
+3、还有一点：push是将本地仓库的内容同步到远程仓库，如果有代码没有提交到本地仓库，也可以push，只是没有提交到本地仓库的部分，也就不会同步到远程仓库了。
+
+
+
+
+
+
+
+
+
